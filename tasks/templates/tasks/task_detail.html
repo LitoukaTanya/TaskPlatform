@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ task.name }}</h1>
+        <p><strong>DESCRIPTION: </strong>{{ task.description }}</p>
+        <p><strong>ASSIGNEE: </strong>{{ task.assignee.username }}</p>
+        <p><strong>STATUS: </strong>{{ task.get_status_display }}</p>
+        {% if task.note %}
+            <p>{<strong>COMMENTS: </strong>{ task.note }}</p>
+        {% endif %}
+        <p>
+            <a href="{% url 'status_update' task.pk 'in_progress' %}">в процессе</a>
+            <a href="{% url 'status_update' task.pk 'completed' %}">завершено</a>
+            <a href="{% url 'status_update' task.pk 'pending' %}">в ожидании</a>
+        </p>
+
+        <h2>Comments:</h2>
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    <strong>{{ comment.user.username }}</strong>
+                    <p>{{ comment.content }}</p>
+                    <p><em>{{ comment.created_at }}</em></p>
+                </li>
+            {% endfor %}
+        </ul>
+        <h2>Add a comment:</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit">Add Comment</button>
+        </form>
+{% endblock %}
